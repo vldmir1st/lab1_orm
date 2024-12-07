@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: lab1_orm
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/db?currentSchema=orm
+    username: user
+    password: pass
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        generate_statistics: false
+        show_sql: true
+        format_sql: true
+        hbm2ddl:
+          auto: create-drop
