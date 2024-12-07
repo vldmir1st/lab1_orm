@@ -1,9 +1,15 @@
 package ru.fefu.tarkhov.lab1_orm;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
+@OpenAPIDefinition(info = @Info(
+        title = "Лаба №1 (ORM + Swagger)",
+        version = "0.0.1-SNAPSHOT"
+))
 public class Lab1OrmApplication {
 
     public static void main(String[] args) {
