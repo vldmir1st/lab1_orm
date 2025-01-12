@@ -1,8 +1,7 @@
 version: '3.9'
 
 services:
-
-  database:
+  postgres:
     image: 'postgres:14-alpine'
     container_name: 'postgres'
     environment:
@@ -10,4 +9,42 @@ services:
       - POSTGRES_PASSWORD=pass
       - POSTGRES_DB=db
     ports:
-      - 5432:5432
+      - '5432:5432'
+
+  keycloak:
+    image: 'quay.io/keycloak/keycloak:23.0.6'
+    container_name: 'keycloak'
+    environment:
+      - KC_HOSTNAME=localhost
+      - KC_HOSTNAME_PORT=8080
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_DB=postgres
+      - KC_DB_URL=jdbc:postgresql://localhost/db?currentSchema=orm
+      - KC_DB_USERNAME=user
+      - KC_DB_PASSWORD=pass
+      - KC_HOSTNAME_STRICT=false
+      - KC_HOSTNAME_STRICT_HTTPS=false
+    ports:
+      - '8080:8080'
+    depends_on:
+      - postgres
+    command: start-dev
+
+  pgbackups:
+    container_name: 'backuper'
+    image: 'prodrigestivill/postgres-backup-local:latest'
+    volumes:
+      - ./backup:/backups
+    depends_on:
+      - postgres
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DB=keycloak
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_EXTRA_OPTS=-Z9 --blobs
+      - SCHEDULE=@every 1h0m00s
+      - BACKUP_KEEP_DAYS=7
+      - BACKUP_KEEP_WEEKS=4
+      - BACKUP_KEEP_MONTHS=6

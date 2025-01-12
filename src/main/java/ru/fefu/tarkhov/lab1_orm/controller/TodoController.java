@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
 package ru.fefu.tarkhov.lab1_orm.controller;
 
 import lombok.RequiredArgsConstructor;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.fefu.tarkhov.lab1_orm.entity.ToDo;
 import ru.fefu.tarkhov.lab1_orm.entity.ToDoGroup;
 import ru.fefu.tarkhov.lab1_orm.entity.User;
+import ru.fefu.tarkhov.lab1_orm.exception.TodoNotFoundException;
 import ru.fefu.tarkhov.lab1_orm.repo.ToDoRepo;
 
 @RestController
@@ -29,7 +32,7 @@ public class TodoController {
                     var user = todoGroup.getUser();
                     return (user.getId().equals(userId) && todoGroup.getId().equals(groupId));
                 })
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(TodoNotFoundException::new);
         return ResponseEntity.ok(todo);
     }
 
