@@ -2,20 +2,24 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
 package ru.fefu.tarkhov.lab1_orm.entity;
 
-import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -26,7 +30,6 @@ import java.time.LocalDateTime;
 public class User {
 
     @Id
-    @Hidden
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -35,9 +38,19 @@ public class User {
 
     private LocalDate birthDate;
 
-    private boolean isMale;
+    @Column(length = 1)
+    private String sex;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<ToDo> todos;
+
+    @CreationTimestamp
+    @Column(name = "create_at", nullable = false, updatable = false)
+    private ZonedDateTime createAt;
+
+    @UpdateTimestamp
+    @Column(name = "update_at", nullable = false)
+    private ZonedDateTime updateAt;
 
 }
 

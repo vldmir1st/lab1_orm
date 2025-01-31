@@ -1,17 +1,31 @@
+server:
+  port: 20100
 spring:
   application:
     name: lab1_orm
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:8080/realms/sit_lab/protocol/openid-connect/certs
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/db?currentSchema=orm
+    url: jdbc:postgresql://localhost:5432/db
     username: user
     password: pass
   jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
     properties:
       hibernate:
         generate_statistics: false
-        show_sql: true
+        show_sql: false
         format_sql: true
-        hbm2ddl:
-          auto: create-drop
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+    enabled: true
+
+jwt:
+  auth:
+    converter:
+      principle-attribute: preferred_username

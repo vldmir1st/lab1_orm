@@ -3,37 +3,59 @@
 package ru.fefu.tarkhov.lab1_orm.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.fefu.tarkhov.lab1_orm.entity.User;
+import ru.fefu.tarkhov.lab1_orm.dto.UserDto;
+import ru.fefu.tarkhov.lab1_orm.dto.UserResponse;
+import ru.fefu.tarkhov.lab1_orm.dto.command.CreateUserCommand;
+import ru.fefu.tarkhov.lab1_orm.dto.command.UpdateUserCommand;
 import ru.fefu.tarkhov.lab1_orm.exception.UserNotFoundException;
-import ru.fefu.tarkhov.lab1_orm.repo.UserRepo;
+import ru.fefu.tarkhov.lab1_orm.service.UserAggregate;
+import ru.fefu.tarkhov.lab1_orm.service.UserProjection;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
 
-    private final UserRepo repo;
+    private final UserAggregate aggregate;
+
+    private final UserProjection projection;
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUser(@PathVariable Long id) {
-         var user = repo.findById(id).orElseThrow(UserNotFoundException::new);
-         return ResponseEntity.ok(user);
+    public UserResponse getUser(@PathVariable Long id) {
+         return projection.findBy(id);
+    }
+
+    @GetMapping
+    public List<UserResponse> getAllUsers() {
+        return projection.findAll();
     }
 
     @PostMapping
-    public ResponseEntity<Long> addUser(@RequestBody User user) {
-        var userInDb = repo.save(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(userInDb.getId());
+    public Long addUser(@RequestBody CreateUserCommand command) {
+        return aggregate.handleUserCreateCommand(command);
+    }
+
+    @PutMapping
+    public void updateUser(@RequestBody UpdateUserCommand command) {
+        aggregate.handleUserUpdateCommand(command);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteUser(@PathVariable Long id) {
+        aggregate.handleUserDeleteCommand(id);
     }
 
     @GetMapping("/test-user")
