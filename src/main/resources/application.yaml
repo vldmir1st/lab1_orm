@@ -14,14 +14,18 @@ spring:
     username: user
     password: pass
   jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
     properties:
       hibernate:
         generate_statistics: false
-        show_sql: true
+        show_sql: false
         format_sql: true
         hbm2ddl:
-          auto: validate
+          auto: create
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+    enabled: true
 
 jwt:
   auth:
